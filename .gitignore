@@ -1,0 +1,6 @@
+node_modules/
+out/
+public/captures/*
+!public/captures/demo.webm
+!public/captures/demo.events.json
+.DS_Store

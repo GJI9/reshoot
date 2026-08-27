@@ -1,0 +1,62 @@
+{
+  "name": "demo",
+  "viewport": {
+    "width": 1920,
+    "height": 1080,
+    "dpr": 2
+  },
+  "fps": 30,
+  "t0_epoch": 1787818990759,
+  "events": [
+    {
+      "t": 531,
+      "type": "nav",
+      "x": 960,
+      "y": 1160,
+      "label": "file:///Users/ji/Desktop/reshoot/example/app/index.html"
+    },
+    {
+      "t": 2017,
+      "type": "click",
+      "x": 1824,
+      "y": 48,
+      "label": "New expense"
+    },
+    {
+      "t": 2722,
+      "type": "type",
+      "x": 1711,
+      "y": 120,
+      "text": "Alder & Finch Studio",
+      "label": "Vendor"
+    },
+    {
+      "t": 4422,
+      "type": "click",
+      "x": 1711,
+      "y": 203,
+      "label": "Category"
+    },
+    {
+      "t": 4913,
+      "type": "type",
+      "x": 1711,
+      "y": 286,
+      "text": "2480",
+      "label": "Amount"
+    },
+    {
+      "t": 6406,
+      "type": "click",
+      "x": 1614,
+      "y": 355,
+      "label": "Submit for approval"
+    },
+    {
+      "t": 7638,
+      "type": "move",
+      "x": 700,
+      "y": 300
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "name": "reshoot",
+  "version": "0.1.0",
+  "description": "Record a real browser, composite the cursor afterwards. Product demo videos you can edit without re-recording.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "example:record": "node example/record.mjs",
+    "studio": "remotion studio",
+    "render": "remotion render Demo out/demo.mp4"
+  },
+  "dependencies": {
+    "@remotion/bundler": "^4.0.484",
+    "@remotion/cli": "^4.0.484",
+    "@remotion/renderer": "^4.0.484",
+    "playwright": "^1.61.1",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "remotion": "^4.0.484"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.7",
+    "typescript": "^5.9.3"
+  }
+}

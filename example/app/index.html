@@ -1,0 +1,144 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>Ledger</title>
+<!-- A small stand-in product so `npm run example:record` works with no server and no
+     account. It is deliberately plain: the point of the example is the compositing,
+     not this UI. -->
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --panel: #141414;
+    --line: #232323;
+    --text: #ededed;
+    --muted: #8a8a8a;
+    --accent: #2980d4;
+    --warn: #b98900;
+    --ok: #3d8f5a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: grid;
+    grid-template-columns: 232px 1fr;
+    height: 100vh;
+    overflow: hidden;
+  }
+  nav { border-right: 1px solid var(--line); padding: 22px 14px; }
+  .brand { font-weight: 700; letter-spacing: -0.2px; padding: 0 10px 22px; }
+  nav a {
+    display: block; padding: 8px 10px; border-radius: 6px;
+    color: var(--muted); text-decoration: none;
+  }
+  nav a.on { background: var(--panel); color: var(--text); }
+  main { padding: 28px 34px; overflow: auto; }
+  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  h1 { font-size: 21px; font-weight: 650; margin: 0; letter-spacing: -0.3px; }
+  button {
+    font: inherit; border: 1px solid var(--line); background: var(--panel);
+    color: var(--text); padding: 8px 14px; border-radius: 6px; cursor: pointer;
+  }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 550; }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    text-align: left; font-size: 12px; font-weight: 500; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.6px;
+    padding: 0 12px 10px; border-bottom: 1px solid var(--line);
+  }
+  td { padding: 15px 12px; border-bottom: 1px solid var(--line); }
+  td.amt { font-variant-numeric: tabular-nums; }
+  .chip { font-size: 12px; padding: 3px 9px; border-radius: 20px; border: 1px solid; }
+  .chip.pending { color: var(--warn); border-color: #4a3a00; background: #241c00; }
+  .chip.approved { color: var(--ok); border-color: #1e3d2a; background: #10251a; }
+  aside {
+    position: fixed; top: 0; right: 0; width: 420px; height: 100%;
+    background: var(--panel); border-left: 1px solid var(--line);
+    padding: 26px 28px; transform: translateX(100%); transition: transform 260ms ease;
+  }
+  aside.open { transform: none; }
+  aside h2 { font-size: 17px; font-weight: 650; margin: 0 0 22px; }
+  label { display: block; font-size: 13px; color: var(--muted); margin: 16px 0 6px; }
+  input, select {
+    font: inherit; width: 100%; background: #0e0e0e; color: var(--text);
+    border: 1px solid var(--line); border-radius: 6px; padding: 9px 11px;
+  }
+  input:focus, select:focus { outline: none; border-color: var(--accent); }
+  .actions { display: flex; gap: 10px; margin-top: 28px; }
+</style>
+
+<nav>
+  <div class="brand">Ledger</div>
+  <a href="#" class="on">Expenses</a>
+  <a href="#">Vendors</a>
+  <a href="#">Budgets</a>
+  <a href="#">Settings</a>
+</nav>
+
+<main>
+  <header>
+    <h1>Expenses</h1>
+    <button class="primary" id="new">New expense</button>
+  </header>
+  <table>
+    <thead>
+      <tr><th>Vendor</th><th>Category</th><th>Amount</th><th>Status</th></tr>
+    </thead>
+    <tbody id="rows">
+      <tr>
+        <td>Northwind Print</td><td>Marketing</td>
+        <td class="amt">$1,240.00</td><td><span class="chip approved">Approved</span></td>
+      </tr>
+      <tr>
+        <td>Halden Logistics</td><td>Operations</td>
+        <td class="amt">$3,915.50</td><td><span class="chip approved">Approved</span></td>
+      </tr>
+      <tr>
+        <td>Corvid Hosting</td><td>Infrastructure</td>
+        <td class="amt">$482.00</td><td><span class="chip pending">Pending</span></td>
+      </tr>
+    </tbody>
+  </table>
+</main>
+
+<aside id="panel">
+  <h2>New expense</h2>
+  <label for="vendor">Vendor</label>
+  <input id="vendor" name="vendor" autocomplete="off" />
+  <label for="category">Category</label>
+  <select id="category" name="category">
+    <option value="">Select a category</option>
+    <option>Marketing</option>
+    <option>Operations</option>
+    <option>Infrastructure</option>
+    <option>Travel</option>
+  </select>
+  <label for="amount">Amount (USD)</label>
+  <input id="amount" name="amount" autocomplete="off" />
+  <div class="actions">
+    <button class="primary" id="save">Submit for approval</button>
+    <button id="cancel">Cancel</button>
+  </div>
+</aside>
+
+<script>
+  const panel = document.getElementById('panel');
+  document.getElementById('new').onclick = () => panel.classList.add('open');
+  document.getElementById('cancel').onclick = () => panel.classList.remove('open');
+
+  document.getElementById('save').onclick = () => {
+    const vendor = document.getElementById('vendor').value || 'Untitled vendor';
+    const category = document.getElementById('category').value || 'Uncategorised';
+    const raw = Number(document.getElementById('amount').value.replace(/[^0-9.]/g, '')) || 0;
+    const amount = raw.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+
+    const tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td>' + vendor + '</td><td>' + category + '</td>' +
+      '<td class="amt">' + amount + '</td>' +
+      '<td><span class="chip pending">Pending</span></td>';
+    document.getElementById('rows').prepend(tr);
+    panel.classList.remove('open');
+  };
+</script>
